@@ -21,6 +21,10 @@ int Player::getScore()
     return this->score;
 }
 
+Player::Player()
+{
+}
+
 void Player::setScore(int getScore)
 {
     this->score = getScore;
@@ -31,7 +35,8 @@ double Player::getAccuracy()
     return this->accuracy;
 }
 
-void Player::setAccuracy(double accuracy)
+
+void Player::setAccuracy(int accuracy)
 {
     this->accuracy = accuracy;
 }

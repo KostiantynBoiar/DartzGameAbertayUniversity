@@ -4,11 +4,24 @@
 #include <cstdlib>
 #include <ctime>
 #include <list>
+#include "Dartz.h"
+#include "Player.h"
+#include <cmath>
+#include <iomanip>
+
+
 class Game
 {
+private:
+	Player player1;
+	Player player2;
+	Dartz dartz;
+
 public:
-	int playerTurn(int score);
-	std::string playGame();
+	Game();
+	Game(Player& player1, Player& player2, Dartz& dartz);
+	int playerTurn(Player &player);
+	std::string playGame(Player& player1, Player& player2);
 
 	// Function to simulate a set
 
@@ -30,5 +43,9 @@ public:
 			1 : 7 5%
 	*/
 	std::list<std::pair<int, int>> resultsTable(std::pair<int, int> playSet);
+	void drawResultsTable(const std::list<std::pair<int, int>>& results);
+
+	~Game();
+	
 };
 
