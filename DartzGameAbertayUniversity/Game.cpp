@@ -44,6 +44,7 @@ int Game::playerTurn(Player& player) {
             break;
         }
         
+    }
 
     return -1; 
 }
