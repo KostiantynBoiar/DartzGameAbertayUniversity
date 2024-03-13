@@ -150,6 +150,17 @@ void Game::simulateFinal(int numSets) {
     for (const auto& pair : result) {
         std::cout << pair.first << " : " << (pair.second * 100)/totalGames << " %" << std::endl;
     }
+    int maxGames = 0;
+    std::string mostLikelyResult;
+    for (const auto& pair : result) {
+        if (pair.second > maxGames) {
+            maxGames = pair.second;
+            mostLikelyResult = pair.first;
+        }
+    }
+
+    std::cout << "Most likely result: " << mostLikelyResult << std::endl;
+
 }
 
 std::string Game::getResultKey(int joeSetsWon, int sidSetsWon) {
