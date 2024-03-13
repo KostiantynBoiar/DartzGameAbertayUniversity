@@ -7,23 +7,20 @@ int main() {
     // Seed the random number generator
     srand(time(nullptr));
 
-    Player player1("Joe", 501);
-    Player player2("Sid", 501);
+    Player player1("Joe", 501, 80);
+    Player player2("Sid", 501, 90);
     // Create a Game instance
+    int countOfSimulation = 1000;
     Dartz dartz;
     Game game(player1, player2, dartz);
+    std::cout << "Joe accuracy: " << player1.getAccuracy() << std::endl << "Sid accuracy: " << player2.getAccuracy() << std::endl;
 
-    // Simulate a final between Joe and Sid with 10 sets
-    //std::pair<int, int> finalResult = game.simulateFinal(100);
+   
+      // Simulate a final between Joe and Sid with 10 sets
+      game.simulateFinal(countOfSimulation);
 
-    game.playerTurn(player1);
-    /*
-    // Generate the results table for the final
-    std::list<std::pair<int, int>> results = game.resultsTable(finalResult);
 
-    // Output the results table
-    game.drawResultsTable(results);
-    */
+  
 
     return 0;
 }

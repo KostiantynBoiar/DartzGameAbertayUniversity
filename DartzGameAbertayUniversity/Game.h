@@ -8,7 +8,7 @@
 #include "Player.h"
 #include <cmath>
 #include <iomanip>
-
+#include <map>
 
 class Game
 {
@@ -16,19 +16,20 @@ private:
 	Player player1;
 	Player player2;
 	Dartz dartz;
+	std::string getResultKey(int joeSetsWon, int sidSetsWon);
 
 public:
 	Game();
 	Game(Player& player1, Player& player2, Dartz& dartz);
-	int playerTurn(Player &player);
-	std::string playGame(Player& player1, Player& player2);
+	int playerTurn(Player& player, int lastScore);
+	std::string playGame(Player& player1, Player& player2, bool boolPlayerTurn);
 
 	// Function to simulate a set
 
-	std::pair<int, int> playSet();
+	std::pair<int, int> playSet(bool turn);
 
 	// Function to simulate the World Championships final
-	std::pair<int, int> simulateFinal(int numSets);
+	void simulateFinal(int numSets);
 
 	//Function for drawing results in the table format
 	//Format of output table is {Player1} : {Player2} Frequency
@@ -42,10 +43,7 @@ public:
 			2 : 7 9%
 			1 : 7 5%
 	*/
-	std::list<std::pair<int, int>> resultsTable(std::pair<int, int> playSet);
-	void drawResultsTable(const std::list<std::pair<int, int>>& results);
 
 	~Game();
-	
-};
 
+};

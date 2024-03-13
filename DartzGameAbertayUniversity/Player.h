@@ -7,11 +7,11 @@ class Player
 private:
 	std::string name;
 	int score;
-	int accuracy = rand() % 100 + 1;
+	int accuracy;
 
 public:
 	Player();
-	Player(std::string name, int score);
+	Player(std::string name, int score, int accuracy);
 	std::string getName();
 	void setName(std::string getName);
 	int getScore();

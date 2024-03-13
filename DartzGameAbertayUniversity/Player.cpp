@@ -1,9 +1,10 @@
 #include "Player.h"
 
-Player::Player(std::string name, int score)
+Player::Player(std::string name, int score, int accuracy)
 {
     this->name = name;
     this->score = score;
+    this->accuracy = accuracy;
 }
 
 std::string Player::getName()
