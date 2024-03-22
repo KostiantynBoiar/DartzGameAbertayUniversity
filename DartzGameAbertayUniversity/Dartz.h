@@ -2,7 +2,7 @@
 class Dartz
 {
 private:
-	int percantage;
+	int percentage;
 public:
 	enum Throw
 	{
@@ -11,6 +11,8 @@ public:
 		throwDoubleEnum = 2, 
 		throwSingleEnum = 3
 	};
+	Dartz();
+	Dartz(int percantage);
 	int throwBull(int getPercantage);
 	int throwTreble(int trebleD, int accuracyP);
 	int throwDouble(int trebleD);

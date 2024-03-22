@@ -10,7 +10,7 @@ int main() {
     Player player1("Joe", 501, 90);
     Player player2("Sid", 501, 90);
     // Create a Game instance
-    int countOfSimulation = 100000;
+    int countOfSimulation = 100;
     Dartz dartz;
     Game game(player1, player2, dartz);
     std::cout << "Count of simulation: " << countOfSimulation << std::endl;

@@ -9,6 +9,7 @@
 #include <cmath>
 #include <iomanip>
 #include <map>
+#include <unordered_map>
 
 class Game
 {
@@ -19,15 +20,28 @@ private:
 	std::string getResultKey(int joeSetsWon, int sidSetsWon);
 
 public:
+
 	Game();
 	Game(Player& player1, Player& player2, Dartz& dartz);
 	int playerTurn(Player& player, int lastScore);
 	std::string playGame(Player& player1, Player& player2, bool boolPlayerTurn);
 
 	// Function to simulate a set
+	std::unordered_map<int, std::string> strategyTable = {
+	{70, "T20, T20, Bullseye"},
+	{167, "T20, T19, Bullseye"},
+	{164, "T20, T18, Bullseye"},
+	};
+	
+	/*
+		That's a function where I will be parsing strategy table for build strategy for a player depends of his remaining score
+		Every iteration I will return map with 3 throws, first value will type of first throw, second will aim of first throw etc.
+	*/
+	std::unordered_map<Dartz::Throw, int> parseTable(int remainingScore);
 
 	std::pair<int, int> playSet(bool turn);
 
+	Dartz getDartz();
 	// Function to simulate the World Championships final
 	void simulateFinal(int numSets);
 
@@ -43,7 +57,7 @@ public:
 			2 : 7 9%
 			1 : 7 5%
 	*/
-
+	std::string calculateNextThrow(int remainingScore, Player& player);
 	~Game();
 
 };

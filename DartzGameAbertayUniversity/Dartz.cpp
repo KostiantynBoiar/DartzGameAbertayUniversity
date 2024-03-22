@@ -1,6 +1,15 @@
 #include "Dartz.h"
 #include <random>
 
+Dartz::Dartz()
+{
+}
+
+Dartz::Dartz(int percantage)
+{
+	this->percentage = percantage;
+}
+
 int Dartz::throwBull(int getPercantage)
 {
 	//  Throw for the bull with percent accuracy (20<p<85)
@@ -93,10 +102,10 @@ int Dartz::throwSingle(int trebleD)
 
 int Dartz::getPercantage()
 {
-	return this->percantage;
+	return this->percentage;
 }
 
 void Dartz::setPercentage(int getP)
 {
-	this->percantage = getP;
+	this->percentage = getP;
 }
