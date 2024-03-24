@@ -32,6 +32,7 @@ public:
 	{70, "T20, T20, B0"},
 	{167, "T20, T19, B0"},
 	{164, "T20, T18, B0"},
+	{103, "	T17, S12, D20"},
 	};
 	
 	/*
@@ -58,7 +59,6 @@ public:
 			2 : 7 9%
 			1 : 7 5%
 	*/
-	std::string calculateNextThrow(int remainingScore, Player& player);
 	~Game();
 
 };
