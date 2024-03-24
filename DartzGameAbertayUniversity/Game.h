@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <map>
 #include <unordered_map>
+#include <sstream>
 
 class Game
 {
@@ -28,9 +29,9 @@ public:
 
 	// Function to simulate a set
 	std::unordered_map<int, std::string> strategyTable = {
-	{70, "T20, T20, Bullseye"},
-	{167, "T20, T19, Bullseye"},
-	{164, "T20, T18, Bullseye"},
+	{70, "T20, T20, B0"},
+	{167, "T20, T19, B0"},
+	{164, "T20, T18, B0"},
 	};
 	
 	/*

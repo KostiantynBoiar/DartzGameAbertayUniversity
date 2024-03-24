@@ -16,14 +16,55 @@ int Game::playerTurn(Player& player, int lastScore) {
     int remainingScore = lastScore;
     int bufferScore = lastScore;
     Dartz::Throw lastThrow;
-    player.setScore(70);
-    for (int i = 0; i < 3; i++) {
+    //player.setScore(70);
+    int i = 0;
+    while (i != 3) {
 
         int score = dartz.throwBull(player.getAccuracy()); // Adjust the dartboard sequence
         parseTable(remainingScore);
 
         
         // Deduct score from remainingScore
+        std::unordered_map <Dartz::Throw, int> nextThrows = parseTable(remainingScore);
+        if (!nextThrows.empty() && i == 0) {
+            for (auto nextThrow : nextThrows) {
+                if (nextThrow.first == Dartz::Throw::throwSingleEnum) {
+                    dartz.throwSingle(nextThrow.second);
+                }
+                if (nextThrow.first == Dartz::Throw::throwDoubleEnum) {
+                    dartz.throwDouble(nextThrow.second);
+                }
+                if (nextThrow.first == Dartz::Throw::throwTrebleEnum) {
+                    dartz.throwTreble(nextThrow.first, player.getAccuracy());
+                }
+                if (nextThrow.first == Dartz::Throw::throwBullEnum) {
+                    dartz.throwBull(player.getAccuracy());
+                }
+                i++;
+            }
+        }
+        else {
+            if (score == 50)
+                lastThrow = Dartz::Throw::throwBullEnum;
+            else if (score % 2 == 0 && score != 0)
+                lastThrow = Dartz::Throw::throwDoubleEnum;
+            else if (score % 3 == 0 && score != 0)
+                lastThrow = Dartz::Throw::throwTrebleEnum;
+            else
+                lastThrow = Dartz::Throw::throwSingleEnum;
+
+            switch (remainingScore)
+            {
+            case 20:
+                score = dartz.throwSingle(20);
+            case 40:
+                score = dartz.throwDouble(20);
+            case 60:
+                score = dartz.throwTreble(20, player.getAccuracy());
+            default:
+                break;
+            }
+        }
 
         if (remainingScore > 1) remainingScore -= score;
         if (remainingScore == 1) return -1;
@@ -83,11 +124,34 @@ std::unordered_map<Dartz::Throw, int> Game::parseTable(int remainingScore)
     // Check if the score is in the strategy table
     if (strategyTable.find(remainingScore) != strategyTable.end()) {
         std::string strategy = strategyTable[remainingScore];
-        std::string firstThrow;
-        std::string secondThrow;
-        std::string thirdThrow;
-        
+        std::string throws[3];
+        std::stringstream ss(strategy);
+        for (int i = 0; i < 3; ++i) {
+            if (std::getline(ss, throws[i], ',')) {
+                char throwType = throws[i][0];
+                std::string throwTarget = throws[i].substr(1);
+                Dartz::Throw throwTypeValue;
+                switch (throwType) {
+                case 'S':
+                    throwTypeValue = Dartz::Throw::throwSingleEnum;
+                    break;
+                case 'D':
+                    throwTypeValue = Dartz::Throw::throwDoubleEnum;
+                    break;
+                case 'T':
+                    throwTypeValue = Dartz::Throw::throwTrebleEnum;
+                    break;
+                case 'B':
+                    throwTypeValue = Dartz::Throw::throwBullEnum;
+                default:
+                    continue; 
+                }
+                int targetValue = std::stoi(throwTarget);
+                throwMap[throwTypeValue] = targetValue;
+            }
+        }
     }
+
 
     return throwMap;
 }
@@ -171,27 +235,6 @@ std::string Game::getResultKey(int joeSetsWon, int sidSetsWon) {
     return std::to_string(joeSetsWon) + " : " + std::to_string(sidSetsWon);
 }
 
-std::string Game::calculateNextThrow(int remainingScore, Player& player)
-{
-    if (strategyTable.find(remainingScore) != strategyTable.end()) {
-        return strategyTable[remainingScore];
-    }
-    else {
-        // If the score is not found in the strategy table, choose the optimal throw
-        // For simplicity, assume T20 is chosen for a score of 40
-        if (remainingScore >= 60) {
-            return "throwThreble";
-        }
-        else if (remainingScore >= 40) {
-            return "throwDouble";
-        }
-        else {
-            // Return the best throw for the remaining score
-            // In this case, we chose T20
-            return "throwSingle";
-        }
-    }
-}
 
 Game::~Game()
 {
