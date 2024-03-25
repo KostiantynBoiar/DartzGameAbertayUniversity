@@ -1,4 +1,6 @@
 #pragma once
+#include <random>
+
 class Dartz
 {
 private:

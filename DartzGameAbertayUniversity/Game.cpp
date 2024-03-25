@@ -20,25 +20,27 @@ int Game::playerTurn(Player& player, int lastScore) {
     int i = 0;
     while (i != 3) {
 
-        int score = dartz.throwBull(player.getAccuracy()); // Adjust the dartboard sequence
-        parseTable(remainingScore);
-
-        
+        int score = dartz.throwBull(player.getAccuracy()); // Adjust the dartboard sequence  
         // Deduct score from remainingScore
+
+        int closestTo32 = std::abs(remainingScore - 32);
+        int closestTo40 = std::abs(remainingScore - 40);
+        int closestTo = (closestTo32 <= closestTo40) ? 32 : 40;
+
         std::unordered_map <Dartz::Throw, int> nextThrows = parseTable(remainingScore);
         if (!nextThrows.empty() && i == 0) {
             for (auto nextThrow : nextThrows) {
                 if (nextThrow.first == Dartz::Throw::throwSingleEnum) {
-                    dartz.throwSingle(nextThrow.second);
+                    score = dartz.throwSingle(nextThrow.second);
                 }
                 if (nextThrow.first == Dartz::Throw::throwDoubleEnum) {
-                    dartz.throwDouble(nextThrow.second);
+                    score = dartz.throwDouble(nextThrow.second);
                 }
                 if (nextThrow.first == Dartz::Throw::throwTrebleEnum) {
-                    dartz.throwTreble(nextThrow.first, player.getAccuracy());
+                    score = dartz.throwTreble(nextThrow.first, player.getAccuracy());
                 }
                 if (nextThrow.first == Dartz::Throw::throwBullEnum) {
-                    dartz.throwBull(player.getAccuracy());
+                    score = dartz.throwBull(player.getAccuracy());
                 }
                 i++;
             }
@@ -59,11 +61,14 @@ int Game::playerTurn(Player& player, int lastScore) {
                 score = dartz.throwSingle(20);
             case 40:
                 score = dartz.throwDouble(20);
+            case 32:
+                score = dartz.throwDouble(16);
             case 60:
                 score = dartz.throwTreble(20, player.getAccuracy());
             default:
                 break;
             }
+            i++;
         }
 
         if (remainingScore > 1) remainingScore -= score;
@@ -191,7 +196,7 @@ void Game::simulateFinal(int numSets) {
         bool turn = (rand() % 2 == 0);
 
         for (int i = 0; i < 13; i++) {
-            if (joeSetsWon > 6 || sidSetsWon > 7) break;
+            if (joeSetsWon > 6 || sidSetsWon > 6) break;
             std::pair<int, int> res = playSet(turn);
             if (res.first > res.second) {
                 joeSetsWon++;
