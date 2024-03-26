@@ -27,7 +27,7 @@ public:
 	int playerTurn(Player& player, int lastScore);
 	std::string playGame(Player& player1, Player& player2, bool boolPlayerTurn);
 
-	// Function to simulate a set
+	// Table where player are able to get the best strategy
 	std::unordered_map<int, std::string> strategyTable = {
 	{70, "T20, T20, B0"},
 	{167, "T20, T19, B0"},
@@ -45,9 +45,6 @@ public:
 
 	Dartz getDartz();
 	// Function to simulate the World Championships final
-	void simulateFinal(int numSets);
-
-	//Function for drawing results in the table format
 	//Format of output table is {Player1} : {Player2} Frequency
 	/*
 		Joe : Sid Frequency
@@ -59,6 +56,10 @@ public:
 			2 : 7 9%
 			1 : 7 5%
 	*/
+	void simulateFinal(int numSets);
+
+	/*Function for calculating best score for player to get 32 or 40*/
+	int calculateThrow(int threbleD, Player &player, int j, int recursionDepth);
 	~Game();
 
 };

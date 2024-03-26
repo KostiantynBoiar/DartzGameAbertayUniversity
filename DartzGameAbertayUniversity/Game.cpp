@@ -16,18 +16,24 @@ int Game::playerTurn(Player& player, int lastScore) {
     int remainingScore = lastScore;
     int bufferScore = lastScore;
     Dartz::Throw lastThrow;
-    //player.setScore(70);
     int i = 0;
+    int j = 0;
+    if (j > 20) j = 1;
+
+
     while (i != 3) {
 
         int score = dartz.throwBull(player.getAccuracy()); // Adjust the dartboard sequence  
-        // Deduct score from remainingScore
-
-        int closestTo32 = std::abs(remainingScore - 32);
-        int closestTo40 = std::abs(remainingScore - 40);
-        int closestTo = (closestTo32 <= closestTo40) ? 32 : 40;
-
+        int calculatedThrow = calculateThrow(1, player, j, 0);
+        j++;
+        if (calculatedThrow != 0 && i < 3 && player.getScore() < 60) {
+            score = dartz.throwSingle(calculatedThrow);
+            i++;
+            calculatedThrow = 0; 
+        }
+        
         std::unordered_map <Dartz::Throw, int> nextThrows = parseTable(remainingScore);
+
         if (!nextThrows.empty() && i == 0) {
             for (auto nextThrow : nextThrows) {
                 if (nextThrow.first == Dartz::Throw::throwSingleEnum) {
@@ -45,7 +51,7 @@ int Game::playerTurn(Player& player, int lastScore) {
                 i++;
             }
         }
-        else {
+        else{
             if (score == 50)
                 lastThrow = Dartz::Throw::throwBullEnum;
             else if (score % 2 == 0 && score != 0)
@@ -58,7 +64,7 @@ int Game::playerTurn(Player& player, int lastScore) {
             switch (remainingScore)
             {
             case 20:
-                score = dartz.throwSingle(20);
+                score = dartz.throwDouble(10);
             case 40:
                 score = dartz.throwDouble(20);
             case 32:
@@ -66,11 +72,15 @@ int Game::playerTurn(Player& player, int lastScore) {
             case 60:
                 score = dartz.throwTreble(20, player.getAccuracy());
             default:
+                score = dartz.throwBull(player.getAccuracy());
                 break;
             }
             i++;
         }
-
+        if (lastThrow == Dartz::Throw::throwSingleEnum && i == 3) {
+            player.setScore(bufferScore);
+            return 0;
+        }
         if (remainingScore > 1) remainingScore -= score;
         if (remainingScore == 1) return -1;
         if (remainingScore < 0) return bufferScore;
@@ -240,6 +250,35 @@ std::string Game::getResultKey(int joeSetsWon, int sidSetsWon) {
     return std::to_string(joeSetsWon) + " : " + std::to_string(sidSetsWon);
 }
 
+
+int Game::calculateThrow(int threbleD, Player& player, int j, int recursionDepth)
+{
+    std::unordered_map <Dartz::Throw, int> nextThrows = parseTable(player.getScore());
+    const int maxRecursionDepth = 20;
+    if (recursionDepth > maxRecursionDepth) {
+        return 0;
+    }
+
+    if (nextThrows.empty()) {
+        if (threbleD > 20) return 0;
+        if (player.getScore() < 60) {
+            if (player.getScore() - dartz.throwSingle(threbleD) == 40 
+                || player.getScore() - dartz.throwSingle(threbleD) == 32 
+                || player.getScore() - dartz.throwSingle(threbleD) == 1) {
+                //std::cout << threbleD << std::endl;
+                return threbleD;
+            }
+            else {
+              //  std::cout << "Next" << std::endl;
+                return calculateThrow(threbleD + j, player, j, recursionDepth + 1);
+            }
+        }
+        else {
+            //std::cout << "Nothing" << std::endl;
+            return 0;
+        }
+    }
+}
 
 Game::~Game()
 {
