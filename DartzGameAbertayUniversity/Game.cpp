@@ -17,6 +17,8 @@ int Game::playerTurn(Player& player, int lastScore) {
     int bufferScore = lastScore;
     Dartz::Throw lastThrow;
     int i = 0;
+
+    //Initilize iterator for recursive function
     int j = 0;
     if (j > 20) j = 1;
 
@@ -24,16 +26,21 @@ int Game::playerTurn(Player& player, int lastScore) {
     while (i != 3) {
 
         int score = dartz.throwBull(player.getAccuracy()); // Adjust the dartboard sequence  
+        
+        // Variable that will contain value of calculateThrow function in itself
         int calculatedThrow = calculateThrow(1, player, j, 0);
         j++;
+        // If calculate throw value is suitable for player then he will throw a dart
         if (calculatedThrow != 0 && i < 3 && player.getScore() < 60) {
             score = dartz.throwSingle(calculatedThrow);
             i++;
             calculatedThrow = 0; 
         }
         
+        //Variable that will contain map of the table
         std::unordered_map <Dartz::Throw, int> nextThrows = parseTable(remainingScore);
 
+        //If variable is not empty then we will throw darts according to the most optimal strategy
         if (!nextThrows.empty() && i == 0) {
             for (auto nextThrow : nextThrows) {
                 if (nextThrow.first == Dartz::Throw::throwSingleEnum) {
@@ -51,6 +58,7 @@ int Game::playerTurn(Player& player, int lastScore) {
                 i++;
             }
         }
+        // If nextThrows is empty then we will throw darts according to default strategy
         else{
             if (score == 50)
                 lastThrow = Dartz::Throw::throwBullEnum;
@@ -197,7 +205,7 @@ Dartz Game::getDartz()
 void Game::simulateFinal(int numSets) {
     srand(time(nullptr)); // Seed the random number generator
     int joeSetsWon = 0;
-    int sidSetsWon = 0;
+    int sidSetsWon = 0, sidSetsWonCounter = 0, joeSetsWonCounter = 0;
     int totalGames = 0;
     std::map<std::string, double> result;
 
@@ -223,7 +231,6 @@ void Game::simulateFinal(int numSets) {
         else {
             result[key]++;
         }
-
         joeSetsWon = 0;
         sidSetsWon = 0;
         totalGames++;

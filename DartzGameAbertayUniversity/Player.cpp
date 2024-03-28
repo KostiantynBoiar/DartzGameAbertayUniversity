@@ -36,6 +36,16 @@ double Player::getAccuracy()
     return this->accuracy;
 }
 
+int Player::getWinCount()
+{
+    return this->winCount;
+}
+
+void Player::setWinCount(int winCount)
+{
+    this->winCount = winCount;
+}
+
 
 void Player::setAccuracy(int accuracy)
 {

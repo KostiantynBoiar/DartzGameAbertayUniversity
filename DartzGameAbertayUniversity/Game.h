@@ -41,6 +41,7 @@ public:
 	*/
 	std::unordered_map<Dartz::Throw, int> parseTable(int remainingScore);
 
+	// Function to simulate set of games for players
 	std::pair<int, int> playSet(bool turn);
 
 	Dartz getDartz();
@@ -58,7 +59,7 @@ public:
 	*/
 	void simulateFinal(int numSets);
 
-	/*Function for calculating best score for player to get 32 or 40*/
+	// Function for calculating best score for player to get 32 or 40
 	int calculateThrow(int threbleD, Player &player, int j, int recursionDepth);
 	~Game();
 

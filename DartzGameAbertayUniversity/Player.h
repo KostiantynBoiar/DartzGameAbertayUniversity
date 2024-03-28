@@ -8,7 +8,7 @@ private:
 	std::string name;
 	int score;
 	int accuracy;
-
+	int winCount;
 public:
 	Player();
 	Player(std::string name, int score, int accuracy);
@@ -18,5 +18,7 @@ public:
 	void setScore(int getScore);
 	double getAccuracy();
 	void setAccuracy(int accuracy);
+	int getWinCount();
+	void setWinCount(int winCount);
 };
 
