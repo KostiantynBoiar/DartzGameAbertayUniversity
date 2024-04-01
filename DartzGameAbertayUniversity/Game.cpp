@@ -10,7 +10,7 @@ Game::Game(Player& player1, Player& player2, Dartz& dartz)
     this->player2 = player2;
     this->dartz = dartz;
 }
-int iter = 0;
+
 int Game::playerTurn(Player& player, int lastScore) {
     Dartz dartz;
     int remainingScore = lastScore;
@@ -22,7 +22,6 @@ int Game::playerTurn(Player& player, int lastScore) {
 
         int score = dartz.throwBull(player.getAccuracy()); // Adjust the dartboard sequence  
         lastThrow = Dartz::Throw::throwBullEnum;
-        iter++;
         // Variable that will contain value of calculateThrow function in itself
 
         int calculatedThrow = calculateThrow(1, player);
@@ -266,7 +265,6 @@ void Game::simulateFinal(int numSets) {
     }
     
     std::cout << "Most likely result: " << mostLikelyResult << std::endl;
-    std::cout << "Iter: " << iter << std::endl;
 }
 
 std::string Game::getResultKey(int joeSetsWon, int sidSetsWon) {
