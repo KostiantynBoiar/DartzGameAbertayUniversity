@@ -36,6 +36,14 @@ double Player::getAccuracy()
     return this->accuracy;
 }
 
+void Player::setIter(int iter)
+{
+    this->iter = iter;
+}
+int Player::getIter() 
+{
+    return this->iter;
+}
 int Player::getWinCount()
 {
     return this->winCount;

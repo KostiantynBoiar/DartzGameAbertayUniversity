@@ -9,10 +9,13 @@ private:
 	int score;
 	int accuracy;
 	int winCount;
+	int iter;
 public:
 	Player();
 	Player(std::string name, int score, int accuracy);
 	std::string getName();
+	void setIter(int iter);
+	int getIter();
 	void setName(std::string getName);
 	int getScore();
 	void setScore(int getScore);

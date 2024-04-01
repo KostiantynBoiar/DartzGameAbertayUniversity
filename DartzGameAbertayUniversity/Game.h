@@ -34,7 +34,7 @@ public:
 	{164, "T20, T18, B0"},
 	{103, "T17, S12, D20"},
 	};
-	
+
 	/*
 		That's a function where I will be parsing strategy table for build strategy for a player depends of his remaining score
 		Every iteration I will return map with 3 throws, first value will type of first throw, second will aim of first throw etc.
@@ -60,7 +60,7 @@ public:
 	void simulateFinal(int numSets);
 
 	// Function for calculating best score for player to get 32 or 40
-	int calculateThrow(int threbleD, Player &player, int j, int recursionDepth);
+	int calculateThrow(int threbleD, Player& player);
 	~Game();
 
 };

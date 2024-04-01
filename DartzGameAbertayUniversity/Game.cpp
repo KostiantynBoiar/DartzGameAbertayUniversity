@@ -10,33 +10,28 @@ Game::Game(Player& player1, Player& player2, Dartz& dartz)
     this->player2 = player2;
     this->dartz = dartz;
 }
-
+int iter = 0;
 int Game::playerTurn(Player& player, int lastScore) {
     Dartz dartz;
     int remainingScore = lastScore;
-    int bufferScore = lastScore;
+    int bufferScore = remainingScore;
     Dartz::Throw lastThrow;
     int i = 0;
-
-    //Initilize iterator for recursive function
-    int j = 0;
-    if (j > 20) j = 1;
-
 
     while (i != 3) {
 
         int score = dartz.throwBull(player.getAccuracy()); // Adjust the dartboard sequence  
-        
+        lastThrow = Dartz::Throw::throwBullEnum;
+        iter++;
         // Variable that will contain value of calculateThrow function in itself
-        int calculatedThrow = calculateThrow(1, player, j, 0);
-        j++;
+
+        int calculatedThrow = calculateThrow(1, player);
         // If calculate throw value is suitable for player then he will throw a dart
-        if (calculatedThrow != 0 && i < 3 && player.getScore() < 60) {
+        if (calculatedThrow != 0 && i == 2 && player.getScore() <= 20) {
             score = dartz.throwSingle(calculatedThrow);
             i++;
-            calculatedThrow = 0; 
         }
-        
+
         //Variable that will contain map of the table
         std::unordered_map <Dartz::Throw, int> nextThrows = parseTable(remainingScore);
 
@@ -59,7 +54,7 @@ int Game::playerTurn(Player& player, int lastScore) {
             }
         }
         // If nextThrows is empty then we will throw darts according to default strategy
-        else{
+        else {
             if (score == 50)
                 lastThrow = Dartz::Throw::throwBullEnum;
             else if (score % 2 == 0 && score != 0)
@@ -73,29 +68,43 @@ int Game::playerTurn(Player& player, int lastScore) {
             {
             case 20:
                 score = dartz.throwDouble(10);
+                break;
             case 40:
                 score = dartz.throwDouble(20);
+                break;
             case 32:
                 score = dartz.throwDouble(16);
+                break;
             case 60:
                 score = dartz.throwTreble(20, player.getAccuracy());
+                break;
             default:
                 score = dartz.throwBull(player.getAccuracy());
                 break;
             }
             i++;
         }
-        if (lastThrow == Dartz::Throw::throwSingleEnum && i == 3) {
-            player.setScore(bufferScore);
-            return 0;
+        // If last throw was not a throwDouble, throwThreble, throwBull we will set player score to the score buffer
+        if (lastThrow == Dartz::Throw::throwSingleEnum && i == 3){
+            return bufferScore;
         }
+        if (bufferScore < 21 && i == 2) {
+            if (bufferScore % 2 == 0) {
+                score = dartz.throwDouble(bufferScore / 2);
+            }
+            else score = dartz.throwDouble(bufferScore / 2 - 0.5);
+            i++;
+        }
+
         if (remainingScore > 1) remainingScore -= score;
         if (remainingScore == 1) return -1;
-        if (remainingScore < 0) return bufferScore;
+        if (remainingScore < 0) remainingScore = bufferScore;
+        
         if (remainingScore == 0) return 0;
 
     }
     player.setScore(remainingScore);
+    i = 0;
     return remainingScore;
 }
 
@@ -167,7 +176,7 @@ std::unordered_map<Dartz::Throw, int> Game::parseTable(int remainingScore)
                 case 'B':
                     throwTypeValue = Dartz::Throw::throwBullEnum;
                 default:
-                    continue; 
+                    continue;
                 }
                 int targetValue = std::stoi(throwTarget);
                 throwMap[throwTypeValue] = targetValue;
@@ -178,6 +187,8 @@ std::unordered_map<Dartz::Throw, int> Game::parseTable(int remainingScore)
 
     return throwMap;
 }
+
+
 
 
 std::pair<int, int> Game::playSet(bool turn) {
@@ -204,18 +215,23 @@ Dartz Game::getDartz()
 
 void Game::simulateFinal(int numSets) {
     srand(time(nullptr)); // Seed the random number generator
-    int joeSetsWon = 0;
-    int sidSetsWon = 0, sidSetsWonCounter = 0, joeSetsWonCounter = 0;
-    int totalGames = 0;
+
+    // Initialize variables to track results
     std::map<std::string, double> result;
+    int totalGames = 0;
 
+    // Main loop for simulating matches
     for (int i = 0; i < numSets; i++) {
+        // Reset sets won counters for each new set
+        int joeSetsWon = 0;
+        int sidSetsWon = 0;
 
-        bool turn = (rand() % 2 == 0);
-
-        for (int i = 0; i < 13; i++) {
-            if (joeSetsWon > 6 || sidSetsWon > 6) break;
+        // Play sets until one player wins 7 sets
+        while (joeSetsWon < 7 && sidSetsWon < 7) {
+            bool turn = (rand() % 2 == 0); // Randomly choose starting player
             std::pair<int, int> res = playSet(turn);
+
+            // Determine winner of the set and update counters
             if (res.first > res.second) {
                 joeSetsWon++;
             }
@@ -224,22 +240,22 @@ void Game::simulateFinal(int numSets) {
             }
         }
 
+        // Record the outcome of the set
         std::string key = getResultKey(joeSetsWon, sidSetsWon);
-        if (result.find(key) == result.end()) {
-            result[key] = 1;
-        }
-        else {
-            result[key]++;
-        }
-        joeSetsWon = 0;
-        sidSetsWon = 0;
+        result[key]++;
+
+        // Update total number of games played
         totalGames++;
     }
 
+    // Output results
     std::cout << "Results:" << std::endl;
+    std::cout << "Joe : Sid" << std::endl;
     for (const auto& pair : result) {
-        std::cout << pair.first << " : " << (pair.second * 100)/totalGames << " %" << std::endl;
+        std::cout << pair.first << " : " << (pair.second * 100) / totalGames << " %" << std::endl;
     }
+
+    // Find the most likely result
     int maxGames = 0;
     std::string mostLikelyResult;
     for (const auto& pair : result) {
@@ -248,9 +264,9 @@ void Game::simulateFinal(int numSets) {
             mostLikelyResult = pair.first;
         }
     }
-
+    
     std::cout << "Most likely result: " << mostLikelyResult << std::endl;
-
+    std::cout << "Iter: " << iter << std::endl;
 }
 
 std::string Game::getResultKey(int joeSetsWon, int sidSetsWon) {
@@ -258,34 +274,27 @@ std::string Game::getResultKey(int joeSetsWon, int sidSetsWon) {
 }
 
 
-int Game::calculateThrow(int threbleD, Player& player, int j, int recursionDepth)
-{
-    std::unordered_map <Dartz::Throw, int> nextThrows = parseTable(player.getScore());
+int Game::calculateThrow(int threbleD, Player& player) {
     const int maxRecursionDepth = 20;
-    if (recursionDepth > maxRecursionDepth) {
-        return 0;
+
+    if (player.getScore() > 20) {
+        return 0; // No need to calculate throw if score is already high
     }
 
-    if (nextThrows.empty()) {
-        if (threbleD > 20) return 0;
-        if (player.getScore() < 60) {
-            if (player.getScore() - dartz.throwSingle(threbleD) == 40 
-                || player.getScore() - dartz.throwSingle(threbleD) == 32 
-                || player.getScore() - dartz.throwSingle(threbleD) == 1) {
-                //std::cout << threbleD << std::endl;
-                return threbleD;
-            }
-            else {
-              //  std::cout << "Next" << std::endl;
-                return calculateThrow(threbleD + j, player, j, recursionDepth + 1);
-            }
+    int bestThrow = 0;
+
+    // Calculate the best throw based on the score difference
+    for (int throwValue = 1; throwValue <= 20; ++throwValue) {
+        int remainingScore = player.getScore() - dartz.throwSingle(throwValue);
+        if (remainingScore == 40 || remainingScore == 32 || remainingScore == 1) {
+            return threbleD;
         }
-        else {
-            //std::cout << "Nothing" << std::endl;
-            return 0;
-        }
+
     }
+
+    return bestThrow;
 }
+
 
 Game::~Game()
 {
