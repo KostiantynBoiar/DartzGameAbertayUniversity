@@ -27,7 +27,7 @@ int Game::playerTurn(Player& player, int lastScore) {
         int calculatedThrow = calculateThrow(1, player);
         // If calculate throw value is suitable for player then he will throw a dart
         if (calculatedThrow != 0 && i == 2 && player.getScore() <= 20) {
-            score = dartz.throwSingle(calculatedThrow);
+            score = dartz.throwSingle(calculatedThrow, player.getAccuracy());
             i++;
         }
 
@@ -38,10 +38,10 @@ int Game::playerTurn(Player& player, int lastScore) {
         if (!nextThrows.empty() && i == 0) {
             for (auto nextThrow : nextThrows) {
                 if (nextThrow.first == Dartz::Throw::throwSingleEnum) {
-                    score = dartz.throwSingle(nextThrow.second);
+                    score = dartz.throwSingle(nextThrow.second, player.getAccuracy());
                 }
                 if (nextThrow.first == Dartz::Throw::throwDoubleEnum) {
-                    score = dartz.throwDouble(nextThrow.second);
+                    score = dartz.throwDouble(nextThrow.second, player.getAccuracy());
                 }
                 if (nextThrow.first == Dartz::Throw::throwTrebleEnum) {
                     score = dartz.throwTreble(nextThrow.first, player.getAccuracy());
@@ -66,13 +66,13 @@ int Game::playerTurn(Player& player, int lastScore) {
             switch (remainingScore)
             {
             case 20:
-                score = dartz.throwDouble(10);
+                score = dartz.throwDouble(10, player.getAccuracy());
                 break;
             case 40:
-                score = dartz.throwDouble(20);
+                score = dartz.throwDouble(20, player.getAccuracy());
                 break;
             case 32:
-                score = dartz.throwDouble(16);
+                score = dartz.throwDouble(16, player.getAccuracy());
                 break;
             case 60:
                 score = dartz.throwTreble(20, player.getAccuracy());
@@ -89,16 +89,15 @@ int Game::playerTurn(Player& player, int lastScore) {
         }
         if (bufferScore < 21 && i == 2) {
             if (bufferScore % 2 == 0) {
-                score = dartz.throwDouble(bufferScore / 2);
+                score = dartz.throwDouble(bufferScore / 2, player.getAccuracy());
             }
-            else score = dartz.throwDouble(bufferScore / 2 - 0.5);
+            else score = dartz.throwDouble(bufferScore / 2 - 0.5, player.getAccuracy());
             i++;
         }
 
         if (remainingScore > 1) remainingScore -= score;
         if (remainingScore == 1) return -1;
         if (remainingScore < 0) remainingScore = bufferScore;
-        
         if (remainingScore == 0) return 0;
 
     }
@@ -147,7 +146,6 @@ std::string Game::playGame(Player& player1, Player& player2, bool boolPlayerTurn
 }
 
 
-
 std::unordered_map<Dartz::Throw, int> Game::parseTable(int remainingScore)
 {
     std::unordered_map<Dartz::Throw, int> throwMap;
@@ -186,8 +184,6 @@ std::unordered_map<Dartz::Throw, int> Game::parseTable(int remainingScore)
 
     return throwMap;
 }
-
-
 
 
 std::pair<int, int> Game::playSet(bool turn) {
@@ -233,9 +229,12 @@ void Game::simulateFinal(int numSets) {
             // Determine winner of the set and update counters
             if (res.first > res.second) {
                 joeSetsWon++;
+                player1.setIter(player1.getIter() + 1);
             }
             else {
                 sidSetsWon++;
+                player2.setIter(player2.getIter() + 1);
+
             }
         }
 
@@ -253,7 +252,12 @@ void Game::simulateFinal(int numSets) {
     for (const auto& pair : result) {
         std::cout << pair.first << " : " << (pair.second * 100) / totalGames << " %" << std::endl;
     }
-
+    if (player1.getIter() > player2.getIter()) {
+        std::cout << player1.getName() << " won!" << std::endl << "Total wins : " << player1.getIter() << std::endl;
+    }
+    else {
+        std::cout << player2.getName() << " won!" << std::endl << "Total wins : " << player2.getIter() << std::endl;
+    }
     // Find the most likely result
     int maxGames = 0;
     std::string mostLikelyResult;
@@ -283,7 +287,7 @@ int Game::calculateThrow(int threbleD, Player& player) {
 
     // Calculate the best throw based on the score difference
     for (int throwValue = 1; throwValue <= 20; ++throwValue) {
-        int remainingScore = player.getScore() - dartz.throwSingle(throwValue);
+        int remainingScore = player.getScore() - dartz.throwSingle(throwValue, player.getAccuracy());
         if (remainingScore == 40 || remainingScore == 32 || remainingScore == 1) {
             return threbleD;
         }

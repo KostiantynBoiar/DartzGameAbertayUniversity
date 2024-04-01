@@ -17,8 +17,8 @@ public:
 	Dartz(int percantage);
 	int throwBull(int getPercantage);
 	int throwTreble(int trebleD, int accuracyP);
-	int throwDouble(int trebleD);
-	int throwSingle(int trebleD);
+	int throwDouble(int trebleD, int accuracyP);
+	int throwSingle(int trebleD, int accuracyP);
 	int getPercantage();
 	void setPercentage(int getP);
 };

@@ -9,7 +9,7 @@ private:
 	int score;
 	int accuracy;
 	int winCount;
-	int iter;
+	int iter = 0;
 public:
 	Player();
 	Player(std::string name, int score, int accuracy);
