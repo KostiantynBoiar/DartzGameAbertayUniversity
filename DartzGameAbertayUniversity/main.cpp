@@ -7,10 +7,12 @@ int main() {
     // Seed the random number generator
     srand(time(nullptr));
 
-    Player player1("Joe", 501, 79);
-    Player player2("Sid", 501, 80);
+    Player player1("Joe", 501, 90);
+    Player player2("Sid", 501, 90);
     // Create a Game instance
-    int countOfSimulation = 10000;
+    int countOfSimulation;
+    std::cout << "Input count of simulation: ";
+    std::cin >> countOfSimulation;
     Dartz dartz;
     Game game(player1, player2, dartz);
     std::cout << "Count of simulation: " << countOfSimulation << std::endl;
@@ -18,8 +20,8 @@ int main() {
 
    
       // Simulate a final between Joe and Sid with 10 sets
-      game.simulateFinal(countOfSimulation);
-
+    game.simulateFinal(countOfSimulation);
+    system("pause");
 
   
 

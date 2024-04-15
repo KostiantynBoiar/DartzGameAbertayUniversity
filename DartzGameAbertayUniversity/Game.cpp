@@ -78,7 +78,9 @@ int Game::playerTurn(Player& player, int lastScore) {
                 score = dartz.throwTreble(20, player.getAccuracy());
                 break;
             default:
-                score = dartz.throwBull(player.getAccuracy());
+                if (bufferScore > 21) {
+                    score = dartz.throwBull(player.getAccuracy());
+                }
                 break;
             }
             i++;
