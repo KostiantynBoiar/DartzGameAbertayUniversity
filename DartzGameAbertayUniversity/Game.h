@@ -60,7 +60,7 @@ public:
 	void simulateFinal(int numSets);
 
 	// Function for calculating best score for player to get 32 or 40
-	int calculateThrow(int threbleD, Player& player);
+	int calculateThrow(Player& player);
 	~Game();
 
 };

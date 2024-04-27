@@ -1,11 +1,13 @@
+/*
+ Author: Kostiantyn Boiar 2303596 
+*/
+
 #include <iostream>
 #include <iomanip>
 #include "Game.h"
 #include "Player.h"
 
 int main() {
-    // Seed the random number generator
-    srand(time(nullptr));
 
     Player player1("Joe", 501, 90);
     Player player2("Sid", 501, 90);

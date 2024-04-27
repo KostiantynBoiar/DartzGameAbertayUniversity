@@ -9,6 +9,11 @@ Dartz::Dartz(int percantage)
 	this->percentage = percantage;
 }
 
+/*
+Also I have changed this funciton a little bit added dependancy 
+	of result from the accuracy of the player in throwSingle and throwDouble function
+*/
+
 int Dartz::throwBull(int getPercantage)
 {
 	//  Throw for the bull with percent accuracy (20<p<85)

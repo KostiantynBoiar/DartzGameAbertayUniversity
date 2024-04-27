@@ -12,21 +12,40 @@ Game::Game(Player& player1, Player& player2, Dartz& dartz)
 }
 
 int Game::playerTurn(Player& player, int lastScore) {
-    Dartz dartz;
+
     int remainingScore = lastScore;
     int bufferScore = remainingScore;
     Dartz::Throw lastThrow;
     int i = 0;
+/*
+Strategy:
 
-    while (i != 3) {
+First of all player adjust the dartboard sequence by throw dart to the bull
+Player trying to finish on either double 20 or double 16 throw
+If it is not time for the D20 or D16 score then player looking for optimal strategy on the strategy table
+If player has no strategy that he need he return to the default strategy:
+    If player has no score for throw in the switch case and his score more than 21 then player will make throw bull
+    else player go to the next statement for calculating next throw
+
+            if (bufferScore < 21 && i == 2) {
+            if (bufferScore % 2 == 0) {
+                score = dartz.throwDouble(bufferScore / 2, player.getAccuracy());
+            }
+            else score = dartz.throwDouble(bufferScore / 2 - 0.5, player.getAccuracy());
+            i++;
+        
+
+
+*/
+    while (i <= 3) {
 
         int score = dartz.throwBull(player.getAccuracy()); // Adjust the dartboard sequence  
         lastThrow = Dartz::Throw::throwBullEnum;
         // Variable that will contain value of calculateThrow function in itself
 
-        int calculatedThrow = calculateThrow(1, player);
+        int calculatedThrow = calculateThrow(player);
         // If calculate throw value is suitable for player then he will throw a dart
-        if (calculatedThrow != 0 && i == 2 && player.getScore() <= 20) {
+        if (calculatedThrow != 0 && i == 2) {
             score = dartz.throwSingle(calculatedThrow, player.getAccuracy());
             i++;
         }
@@ -211,6 +230,7 @@ Dartz Game::getDartz()
 }
 
 void Game::simulateFinal(int numSets) {
+    
     srand(time(nullptr)); // Seed the random number generator
 
     // Initialize variables to track results
@@ -251,18 +271,23 @@ void Game::simulateFinal(int numSets) {
     // Output results
     std::cout << "Results:" << std::endl;
     std::cout << "Joe : Sid" << std::endl;
+
     for (const auto& pair : result) {
         std::cout << pair.first << " : " << (pair.second * 100) / totalGames << " %" << std::endl;
     }
+
     if (player1.getIter() > player2.getIter()) {
         std::cout << player1.getName() << " won!" << std::endl << "Total wins : " << player1.getIter() << std::endl;
     }
+
     else {
         std::cout << player2.getName() << " won!" << std::endl << "Total wins : " << player2.getIter() << std::endl;
     }
+
     // Find the most likely result
     int maxGames = 0;
     std::string mostLikelyResult;
+
     for (const auto& pair : result) {
         if (pair.second > maxGames) {
             maxGames = pair.second;
@@ -278,12 +303,7 @@ std::string Game::getResultKey(int joeSetsWon, int sidSetsWon) {
 }
 
 
-int Game::calculateThrow(int threbleD, Player& player) {
-    const int maxRecursionDepth = 20;
-
-    if (player.getScore() > 20) {
-        return 0; // No need to calculate throw if score is already high
-    }
+int Game::calculateThrow(Player& player) {
 
     int bestThrow = 0;
 
@@ -291,7 +311,8 @@ int Game::calculateThrow(int threbleD, Player& player) {
     for (int throwValue = 1; throwValue <= 20; ++throwValue) {
         int remainingScore = player.getScore() - dartz.throwSingle(throwValue, player.getAccuracy());
         if (remainingScore == 40 || remainingScore == 32 || remainingScore == 1) {
-            return threbleD;
+            bestThrow = throwValue;
+            return bestThrow;
         }
 
     }
